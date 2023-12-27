@@ -1,0 +1,7 @@
+# Ignore dataset
+preprocessing/
+raw_dataset/
+src_dataset/
+test_output/
+*.dcm
+*.dat

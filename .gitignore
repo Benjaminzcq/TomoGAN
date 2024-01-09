@@ -1,7 +1,9 @@
-# Ignore dataset
+# Ignore datasets in the current directory and all subdirectories.
 preprocessing/
 raw_dataset/
 src_dataset/
 test_output/
 *.dcm
 *.dat
+*.png
+*.h5

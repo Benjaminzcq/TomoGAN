@@ -44,7 +44,8 @@ def equalizehist(psf):
 
 
 ########################## 导入投影数据 ##############################
-nm_path= r'D:\Desktop\artifacts_correction\33.dcm'
+src_path = r'D:\Desktop\artifacts_correction\Datasets\src_dataset'
+nm_path= os.path.join(src_path, 'Normal\\CHENJIANFENG_YL.dcm')
 nm_data = pydicom.read_file(nm_path, force=True)
 
 nm_array = nm_data.pixel_array.astype(np.float32)   # .transpose((1,0,2))[:,::-1] -> onn->∪o⊂->∩o⊂
@@ -62,7 +63,7 @@ print("体后最大值和对应坐标： ", nm_array_half[1][mcod_ba], mcod_ba)
 # print([id_i_array[i] for i in max_coordinates_front])
 
 ########################### 导入PSF数据 ###############################
-psf_path = r'D:\Desktop\artifacts_correction\Sinogram_SingleHead600-5cm-368-MainWindow_256f.dat'
+psf_path = os.path.join(src_path, 'Sinogram_SingleHead600-5cm-368-MainWindow_256f.dat')
 psf_data = np.fromfile(psf_path, dtype=np.float32)
 psf_array = psf_data.reshape([1, 256, 256])
 psf_array[psf_array > 10000] = 10000    # 去除离群不合理值
@@ -70,9 +71,9 @@ psf_array[psf_array > 10000] = 10000    # 去除离群不合理值
 
 # 纠正PSF方向，并归一化，再乘以目标病灶点值
 kernel_equlized = equalizehist(psf_data)
-(kernel_equlized*np.max(nm_array_half[0])).tofile(r'D:\Desktop\artifacts_correction\cc.dat')
+(kernel_equlized*np.max(nm_array_half[0])).tofile(os.path.join(src_path, 'PSF_equal.dat'))
 kernel = kernel_equlized.transpose([0,2,1]) ** 2    # 伽马变换(>1,压缩低灰度范围，从而减少PSF四边边缘噪点)
-(kernel*np.max(nm_array_half[0])).tofile(r'D:\Desktop\artifacts_correction\bb.dat')
+(kernel*np.max(nm_array_half[0])).tofile(os.path.join(src_path, 'PSF_equal_gamma.dat'))
 # kernel = np.power(kernel, 2)
 
 # kernel = (kernel - kernel.min()) / (kernel.max() - kernel.min()) * 50     # 归一化
@@ -133,10 +134,8 @@ padded_image[1:, pad_back_ud : pad_back_ud +  k_sp_new1[1],
 result = padded_image + nm_array
 # 保存为dcm
 nm_data.PixelData = result.astype(np.uint16).tobytes()
-nm_data.save_as(nm_path.replace('.dcm', '_conv.dcm'))
-print(result.shape)
-
-result.astype(np.float32).tofile(nm_path.replace('.dcm', '_conv.dat'))
+nm_data.save_as(nm_path.replace('.dcm', '_conv.dcm').replace('Normal', ''))
+result.astype(np.float32).tofile(nm_path.replace('.dcm', '_conv.dat').replace('Normal', ''))
 
 
 ######################### 直方图可视化 ###############################

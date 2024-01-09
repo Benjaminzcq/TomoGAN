@@ -1,11 +1,11 @@
 import tensorflow as tf 
 import numpy as np 
-import sys, os, time, argparse, shutil, scipy, h5py, glob
+import sys, os, time, argparse, shutil, h5py, glob
 
 parser = argparse.ArgumentParser(description='encode sinogram image.')
 parser.add_argument('-gpus',  type=str, default="0", help='list of visiable GPUs')
 parser.add_argument('-mdl', type=str, required=True, help='Experiment name')
-parser.add_argument('-dsfn',type=str, default='../dataset/demo-dataset.h5', help='h5 dataset file')
+parser.add_argument('-dsfn',type=str, default=r'D:\Desktop\artifacts_correction\demo-dataset-real.h5', help='h5 dataset file')
 
 args, unparsed = parser.parse_known_args()
 if len(unparsed) > 0:

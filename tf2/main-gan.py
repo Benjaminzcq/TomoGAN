@@ -2,30 +2,31 @@
 import tensorflow as tf 
 import numpy as np 
 from util import save2img, str2bool
-import sys, os, time, argparse, shutil, scipy, h5py, glob
+import sys, os, time, argparse, shutil, h5py, glob
 from models import tomogan_disc as make_discriminator_model  # import a disc model
 from models import unet as make_generator_model           # import a generator model
 from data import bkgdGen, gen_train_batch_bg, get1batch4test
 
-parser = argparse.ArgumentParser(description='TomoGAN, for noise/artifact removal')
+parser = argparse.ArgumentParser(description='ACGAN, for SPECT artifact correction')
 parser.add_argument('-gpus',  type=str, default="0", help='list of visiable GPUs')
 parser.add_argument('-expName', type=str, default='debug', help='Experiment name')
 parser.add_argument('-lmse',  type=float, default=0.5, help='lambda mse')
 parser.add_argument('-ladv',  type=float, default=20, help='lambda adv')
 parser.add_argument('-lperc', type=float, default=2, help='lambda perceptual')
 parser.add_argument('-lunet', type=int, default=3, help='Unet layers')
-parser.add_argument('-depth', type=int, default=1, help='input depth (use for 3D CT image only)')
+parser.add_argument('-depth', type=int, default=1, help='input depth (use for 3D CT image only)')   # [2, 1024, 256]-like to 3D
 parser.add_argument('-psz',   type=int, default=256, help='cropping patch size')
-parser.add_argument('-mbsz',  type=int, default=16, help='mini-batch size')
+parser.add_argument('-mbsz',  type=int, default=4, help='mini-batch size')
 parser.add_argument('-itg',   type=int, default=1, help='iterations for G')
 parser.add_argument('-itd',   type=int, default=2, help='iterations for D')
 parser.add_argument('-maxiter', type=int, default=8000, help='maximum iterations')
 # parser.add_argument('-dsfn',  type=str, required=True, help='h5 dataset file')
-parser.add_argument('-dsfn',  type=str, default='D:\Desktop\artifacts_correction\Datasets', help='Artifact dataset file')
+# parser.add_argument('-dsfn',  type=str, default='D:\Desktop\artifacts_correction\Datasets\raw_dataset', help='Artifact dataset file')
+parser.add_argument('-dsfn',  type=str, default=r'D:\Desktop\artifacts_correction\demo-dataset-real.h5', help='Artifact dataset file')
 parser.add_argument('-print', type=str2bool, default=False, help='1: print to terminal; 0: redirect to file')
 
 args, unparsed = parser.parse_known_args()
-if len(unparsed) > 0:
+if len(unparsed) > 0:   # 未解析的参数列表unparsed包含了所有未被解析的参数，这些参数通常需要进一步处理或提示用户重新输入。
     print('Unrecognized argument(s): \n%s \nProgram exiting ... ... ' % '\n'.join(unparsed))
     exit(0)
 
@@ -52,7 +53,7 @@ generator = make_generator_model(input_shape=(None, None, args.depth), nlayers=a
 discriminator = make_discriminator_model(input_shape=(args.psz, args.psz, 1))
 
 feature_extractor_vgg = tf.keras.applications.VGG19(\
-                        weights='../vgg19_weights_notop.h5', \
+                        weights=r'D:\Desktop\artifacts_correction\vgg19_weights_notop.h5', \
                         include_top=False)
 
 # This method returns a helper function to compute cross entropy loss

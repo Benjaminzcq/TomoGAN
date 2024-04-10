@@ -14,7 +14,7 @@ def save2img(d_img, fn):
     imageio.imwrite(fn, img)
 
 def scale2uint8(d_img):
-#     _min, _max = d_img.min(), d_img.max()
+    # _min, _max = d_img.min(), d_img.max()
     np.nan_to_num(d_img, copy=False)
     _min, _max = np.percentile(d_img, 0.05), np.percentile(d_img, 99.95)
     s_img = d_img.clip(_min, _max)

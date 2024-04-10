@@ -39,7 +39,7 @@ def unet(input_shape, use_cnnt=False, nlayers=3):
     
     _tmp = Conv2D(filters=8, kernel_size=1, padding='valid', activation='relu')(ly_outs[-1])
     ly_outs.append(_tmp)
-#     label2idx['ch_stack'] = len(ly_outs)-1
+    # label2idx['ch_stack'] = len(ly_outs)-1
 
     _tmp = unet_conv_block(ly_outs[-1], 32)
     ly_outs.append(_tmp)

@@ -1,4 +1,11 @@
-
+"""
+--> 本项目git clone by: https://github.com/lzhengchun/TomoGAN
+    配置环境：acnet (tf-gpu2.2.0+cuda10.1+cudnn7.6)，已成功跑通并获得良好训练结果
+--> 该项目现改为基于GAN的SPECT平片成像伪影校正算法
+    修改部分：参数->args.dsfn, 
+             数据集获取->gen_train_batch_bg, get1batch4test
+             模型及输出图像保存地址及格式->
+"""
 import tensorflow as tf 
 import numpy as np 
 from util import save2img, str2bool
@@ -21,8 +28,8 @@ parser.add_argument('-itg',   type=int, default=1, help='iterations for G')
 parser.add_argument('-itd',   type=int, default=2, help='iterations for D')
 parser.add_argument('-maxiter', type=int, default=8000, help='maximum iterations')
 # parser.add_argument('-dsfn',  type=str, required=True, help='h5 dataset file')
-# parser.add_argument('-dsfn',  type=str, default='D:\Desktop\artifacts_correction\Datasets\raw_dataset', help='Artifact dataset file')
-parser.add_argument('-dsfn',  type=str, default=r'D:\Desktop\artifacts_correction\demo-dataset-real.h5', help='Artifact dataset file')
+parser.add_argument('-dsfn',  type=str, default='D:\Desktop\artifacts_correction\Datasets\raw_dataset', help='Artifact dataset file')
+# parser.add_argument('-dsfn',  type=str, default=r'D:\Desktop\artifacts_correction\demo-dataset-real.h5', help='Artifact dataset file')
 parser.add_argument('-print', type=str2bool, default=False, help='1: print to terminal; 0: redirect to file')
 
 args, unparsed = parser.parse_known_args()
@@ -45,8 +52,9 @@ if args.print == 0:
 
 # build minibatch data generator with prefetch
 mb_data_iter = bkgdGen(data_generator=gen_train_batch_bg(
-                                      dsfn=args.dsfn, mb_size=args.mbsz, \
-                                      in_depth=args.depth, img_size=args.psz), \
+                                      dsfn=args.dsfn, \
+                                      mb_size=args.mbsz, \
+                                      in_depth=args.depth), \
                        max_prefetch=args.mbsz*4)   
 
 generator = make_generator_model(input_shape=(None, None, args.depth), nlayers=args.lunet ) 

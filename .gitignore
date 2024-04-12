@@ -7,3 +7,5 @@ test_output/
 *.dat
 *.png
 *.h5
+*.pyc
+*.log

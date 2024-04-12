@@ -28,7 +28,7 @@ parser.add_argument('-itg',   type=int, default=1, help='iterations for G')
 parser.add_argument('-itd',   type=int, default=2, help='iterations for D')
 parser.add_argument('-maxiter', type=int, default=8000, help='maximum iterations')
 # parser.add_argument('-dsfn',  type=str, required=True, help='h5 dataset file')
-parser.add_argument('-dsfn',  type=str, default='D:\Desktop\artifacts_correction\Datasets\raw_dataset', help='Artifact dataset file')
+parser.add_argument('-dsfn',  type=str, default=r'D:\Desktop\artifacts_correction\Datasets\raw_dataset', help='Artifact dataset file')
 # parser.add_argument('-dsfn',  type=str, default=r'D:\Desktop\artifacts_correction\demo-dataset-real.h5', help='Artifact dataset file')
 parser.add_argument('-print', type=str2bool, default=False, help='1: print to terminal; 0: redirect to file')
 
